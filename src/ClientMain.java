@@ -10,9 +10,11 @@ public class ClientMain
         try {
             // create an object for the TTT game
             GameData gameData = new GameData();
+            gameData.reset();
             System.out.println("Enter the IP Address of Server. Example 127.0.0.1");
-            Scanner sc= new Scanner(System.in);
-            String ipAddress = sc.nextLine();
+//            Scanner sc= new Scanner(System.in);
+//            String ipAddress = sc.nextLine();
+            String ipAddress = "127.0.0.1";
 
             // create a connection to server
             Socket socket = new Socket(ipAddress,8001);

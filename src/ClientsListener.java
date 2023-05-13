@@ -38,23 +38,29 @@ public class ClientsListener implements Runnable
                     // pulls data for the move from the data field
                     int c = data.charAt(0) - '0';
                     int r = data.charAt(1) - '0';
+                    int nextPoint = Integer.parseInt(String.valueOf(data.charAt(2)));
+
+                    int index = Integer.parseInt(data.substring(4));
+                    System.out.println("Index" + index + " player:"  + data.charAt(3) + "NextOrDown" + nextPoint);
 
                     // changes the board and redraw the screen
-                    frame.makeMove(c,r,data.charAt(2));
+                    frame.makeMove(index,nextPoint,data.charAt(3));
                 }
                 else if(cfs.getCommand() == cfs.RESTART)
                 {
+
                     String data = cfs.getData();
+                    System.out.println("Received in client rightclick " + data.charAt(1) + "#" + data.charAt(3));
                     if(data.charAt(1) == '8') {
-                        frame.clearReset(data.charAt(2));
+                        frame.clearReset(data.charAt(3));
                     }
-                    else if(data.charAt(2) == 'R') {
+                    else if(data.charAt(3) == 'R') {
                         frame.setReset('R');
-                        frame.setRestartText(data.charAt(2));
+                        frame.setRestartText(data.charAt(3));
                     }
                     else {
                         frame.setReset('B');
-                        frame.setRestartText(data.charAt(2));
+                        frame.setRestartText(data.charAt(3));
                     }
 
                 }
@@ -70,7 +76,7 @@ public class ClientsListener implements Runnable
                 }
                 else if(cfs.getCommand() == CommandFromServer.CLOSE)
                 {
-                    String player = (cfs.getData().charAt(2)=='B')?"BLACK":"RED";
+                    String player = (cfs.getData().charAt(3)=='B')?"BLACK":"RED";
                     frame.setText(player + "QUIT, SHUTTING DOWN IN 5 seconds");
                     frame.CloseOtherWindowIn5Seconds(player);
 
@@ -79,7 +85,7 @@ public class ClientsListener implements Runnable
                 {
 //                    frame.setWinText('R');
                     String data = cfs.getData();
-                    if(data.charAt(2) == 'R') {
+                    if(data.charAt(3) == 'R') {
                         frame.rOpened = true;
                     }
                     else
