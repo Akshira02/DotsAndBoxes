@@ -46,53 +46,35 @@ public class GameData
     }
 
     public int isWinner(char current) {
+        int countPlayer = scoreForPlayer(current);
+        char opponent = (current == 'R') ? 'B' : 'R';
+        int countOpponent = scoreForPlayer(opponent);
 
-        boolean[] winForPlayer = new boolean[25];
-        boolean[] winForOpponent = new boolean[25];
-        int countPlayer = 0;
-        int countOpponent = 0;
-
-        for (int i = 0; i < 25; i++) {
-            boolean flag = false;
-            //check right & down
-            if ((points.get(i)[0] == current) && (points.get(i)[1] == current)) {
-                //check down right
-                if (points.get(i + 1)[1] == current) {
-                    //check right down
-                    if (points.get(i + 5)[0] == current) {
-                        winForPlayer[i] = true;
-                        countPlayer++;
-                    }
-                }
-
-            } else {
-                winForPlayer[i] = false;
-            }
-        }
-        char opponent = (current=='R')?'B':'R';
-        for (int i = 0; i < 25; i++) {
-            boolean flag = false;
-            //check right & down
-            if ((points.get(i)[0] == opponent) && (points.get(i)[1] == opponent)) {
-                //check down right
-                if (points.get(i + 1)[1] == opponent) {
-                    //check right down
-                    if (points.get(i + 5)[0] == opponent) {
-                        winForOpponent[i] = true;
-                        countOpponent++;
-                    }
-                }
-
-            } else {
-                winForOpponent[i] = false;
-            }
-        }
-      if(countOpponent == countPlayer )
+        if (countOpponent == countPlayer)
             return 0;
-      else if(countOpponent > countPlayer)
-          return -1;
-      else
-          return 1;
+        else if (countOpponent > countPlayer)
+            return -1;
+        else
+            return 1;
+    }
+
+    public int scoreForPlayer(char player) {
+        int count = 0;
+        for (int i = 0; i < 25; i++) {
+            boolean flag = false;
+            //check right & down
+            if ((points.get(i)[0] == player) && (points.get(i)[1] == player)) {
+                //check down right
+                if (points.get(i + 1)[1] == player) {
+                    //check right down
+                    if (points.get(i + 5)[0] == player) {
+                        count++;
+                    }
+                }
+
+            }
+        }
+        return count;
     }
 
     public boolean canMove() {

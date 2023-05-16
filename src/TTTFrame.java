@@ -9,6 +9,7 @@ import java.util.HashMap;
 public class TTTFrame extends JFrame  {
     // Display message
     private String text = "";
+    private String textScore = "Score";
     // the letter you are playing as
     private char player;
     // stores all the game data
@@ -58,7 +59,6 @@ public class TTTFrame extends JFrame  {
             bOpened = true;
         }
 
-        System.out.println("2222");
         setSize(450,450);
         setResizable(false);
         setAlwaysOnTop(true);
@@ -239,6 +239,9 @@ public class TTTFrame extends JFrame  {
         g.setFont(new Font("Times New Roman", Font.BOLD, 20));
         g.drawString(text, 20, 55);
 
+        g.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        g.drawString(textScore, 30, 80);
+
         // grid
         g.setColor(Color.white);
         for (int y = 0; y < 5; y++) {
@@ -292,6 +295,11 @@ public class TTTFrame extends JFrame  {
             gameData.restartR = true;
         else
             gameData.restartB = true;
+    }
+
+    public void setScore(String score) {
+        textScore = score;
+        this.repaint();
     }
 
     public void clearReset(char player) {

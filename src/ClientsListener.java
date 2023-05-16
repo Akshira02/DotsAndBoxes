@@ -45,6 +45,11 @@ public class ClientsListener implements Runnable
 
                     // changes the board and redraw the screen
                     frame.makeMove(index,nextPoint,data.charAt(3));
+
+                }
+                else if(cfs.getCommand() == cfs.SCORE)
+                {
+                    frame.setScore(cfs.getData());
                 }
                 else if(cfs.getCommand() == cfs.RESTART)
                 {

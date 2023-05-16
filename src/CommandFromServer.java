@@ -16,6 +16,7 @@ public class CommandFromServer implements Serializable
     public static final int X_WINS=5;
     public static final int O_WINS=6;
     public static final int TIE=7;
+    public static final int SCORE=8;
 
     public static boolean rConnected = false;
     public static boolean bConnected = false;

@@ -65,15 +65,12 @@ public class ServersListener implements Runnable
                 if(cfc.getCommand()==CommandFromClient.RESTART)
                 {
                     gameData.reset();
-                    System.out.println("Received rightclick " + data.charAt(3));
                     if(data.charAt(3) == 'R' && data.charAt(1) == '9')//Righclicked - Red
                     {
-                        System.out.println("Sendign client rightclick " + data.charAt(3));
                         CommandFromServer.rReset = true;
 
                     }
-                    else if(data.charAt(3) == 'B' && data.charAt(1) == '9') {//Righclicked - Blue
-                        System.out.println("Sendign client rightclick " + data.charAt(3));
+                    else if(data.charAt(3) == 'B' && data.charAt(1) == '9') {//Rightclicked - Blue
                         CommandFromServer.bReset = true;
                     }else if(data.charAt(3) == 'B' && data.charAt(1) == '8') {
                         CommandFromServer.bReset = false;
@@ -101,6 +98,9 @@ public class ServersListener implements Runnable
 
                     // sends the move out to both players
                     sendCommand(new CommandFromServer(CommandFromServer.MOVE, data));
+                    int countR = gameData.scoreForPlayer('R');
+                    int countB = gameData.scoreForPlayer('B');
+                    sendCommand(new CommandFromServer(CommandFromServer.SCORE, "R: " + countR + " B:" + countB));
 
                     // changes the turn and checks to see if the game is over
                     changeTurn();
