@@ -175,15 +175,21 @@ public class ServersListener implements Runnable
         if (squ == true)
             return index;
 
-        if ((squ == false) && (index - 5 >= 0))
-            squ = gameData.claimIfSquareFormed(index - 5, current);
-        if (squ == true)
-            return index - 5;
+        System.out.println("Checking claim for " + (index - 5)+ " current " + current);
+        if(index - 5>=0) {
+            if ((squ == false) && (index - 5 >= 0) && (gameData.score[index - 5] != 'R') && (gameData.score[index - 5] != 'B'))
+                squ = gameData.claimIfSquareFormed(index - 5, current);
+            if (squ == true)
+                return index - 5;
+        }
 
-        if ((squ == false) && (index % 5 != 0) && (index - 1 >= 0))
-            squ = gameData.claimIfSquareFormed(index - 1, current);
-        if (squ == true)
-            return index - 1;
+        System.out.println("Checking claim for " + (index - 1)+ " current " + current);
+        if(index - 1>=0) {
+            if ((squ == false) && (index % 5 != 0) && (index - 1 >= 0) && (gameData.score[index - 1] != 'R') && (gameData.score[index - 1] != 'B'))
+                squ = gameData.claimIfSquareFormed(index - 1, current);
+            if (squ == true)
+                return index - 1;
+        }
 
         return -1;
     }
