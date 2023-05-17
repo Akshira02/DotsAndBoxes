@@ -41,11 +41,14 @@ public class ClientsListener implements Runnable
                     int nextPoint = Integer.parseInt(String.valueOf(data.charAt(2)));
 
                     int index = Integer.parseInt(data.substring(4));
-                    System.out.println("Index" + index + " player:"  + data.charAt(3) + "NextOrDown" + nextPoint);
 
                     // changes the board and redraw the screen
                     frame.makeMove(index,nextPoint,data.charAt(3));
 
+                }
+                else if(cfs.getCommand() == cfs.CLAIM)
+                {
+                    frame.drawSquare(cfs.getData().charAt(0), Integer.parseInt(cfs.getData().substring(1)));
                 }
                 else if(cfs.getCommand() == cfs.SCORE)
                 {
@@ -72,17 +75,22 @@ public class ClientsListener implements Runnable
                 // handles the various end game states
                 else if(cfs.getCommand() == CommandFromServer.TIE)
                 {
+                    System.out.println("Tie");
                     frame.setText("Tie game.");
+                    frame.setStatus(true);
                 }
                 else if(cfs.getCommand() == CommandFromServer.X_WINS)
                 {
+                    System.out.println("X wins client");
                     frame.setWinText('R');
                     frame.setStatus(true);
                 }
                 else if(cfs.getCommand() == CommandFromServer.CLOSE)
                 {
                     String player = (cfs.getData().charAt(3)=='B')?"BLACK":"RED";
+                    frame.setStatus(false);
                     frame.setText(player + "QUIT, SHUTTING DOWN IN 5 seconds");
+
                     frame.CloseOtherWindowIn5Seconds(player);
 
                 }
@@ -101,6 +109,7 @@ public class ClientsListener implements Runnable
 
                 else if(cfs.getCommand() == CommandFromServer.O_WINS)
                 {
+                    System.out.println("O Wins");
                     frame.setWinText('B');
                     frame.setStatus(true);
                 }

@@ -4,6 +4,7 @@ public class GameData
 {
 //    public static HashMap<Integer, char[]> lines = new HashMap<Integer, char[]>();
     public  HashMap<Integer, char[]> points = new HashMap<Integer, char[]>();
+    public char[] score = new char[25];
 
     public static boolean restartR = false;
     public static boolean restartB = false;
@@ -58,34 +59,70 @@ public class GameData
             return 1;
     }
 
+    public boolean  claimIfSquareFormed(int index, char player){
+        if(index <= 24) {
+            System.out.println("(points.get(index)[0]" + points.get(index)[0]);
+            System.out.println("(points.get(index)[1]" + points.get(index)[1]);
+        }
+        if(index + 1<= 24) {
+            System.out.println("(points.get(index + 1)[1]" + points.get(index + 1)[1]);
+        }
+        if(index + 5<= 24) {
+            System.out.println("(points.get(index + 5)[0]" + points.get(index + 5)[0]);
+        }
+        if ((points.get(index)[0] != ' ') && (points.get(index)[1] != '9') && (points.get(index)[1] != ' ')) {
+            System.out.println("1.Setting index score[index]" + +index + " " + score[index]);
+            //check down right
+            if ((index+1<=24) && (points.get(index + 1)[1] != '9') && (points.get(index + 1)[1] != ' ')) {
+                System.out.println("2.Setting index score[index]" + +index + " " + score[index]);
+                //check right down
+                if (((index+5<=24) && (points.get(index + 5)[0] != '9') && (points.get(index + 5)[0] != ' '))) {
+                    score[index] = player;
+                    System.out.println("3.Setting index score[index]" + +index + " " + score[index]);
+                    return  true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+//    public int scoreForPlayer(char player) {
+//        int count = 0;
+//        for (int i = 0; i < 25; i++) {
+//            boolean flag = false;
+//            //check right & down
+//            if ((points.get(i)[0] == player) && (points.get(i)[1] == player)) {
+//                //check down right
+//                if (points.get(i + 1)[1] == player) {
+//                    //check right down
+//                    if (points.get(i + 5)[0] == player) {
+//                        count++;
+//                    }
+//                }
+//
+//            }
+//        }
+//        return count;
+//    }
+
     public int scoreForPlayer(char player) {
         int count = 0;
         for (int i = 0; i < 25; i++) {
             boolean flag = false;
             //check right & down
-            if ((points.get(i)[0] == player) && (points.get(i)[1] == player)) {
-                //check down right
-                if (points.get(i + 1)[1] == player) {
-                    //check right down
-                    if (points.get(i + 5)[0] == player) {
-                        count++;
-                    }
-                }
-
-            }
+            if (score[i] == player)
+                count++;
         }
         return count;
     }
 
     public boolean canMove() {
-        System.out.println("Check move");
         for (int i = 0; i < 25; i++) {
             char[] nextLines = points.get(i);
-            System.out.println("Chars i" + i+ "#" + nextLines[0] + "#" + nextLines[1] + "#");
             if (nextLines[0] == ' ' || nextLines[1] == ' ')
                 return true;
         }
-        System.out.println("Cant move");
         return false;
 
     }

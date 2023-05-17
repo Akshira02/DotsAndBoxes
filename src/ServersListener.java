@@ -35,15 +35,12 @@ public class ServersListener implements Runnable
             {
                 CommandFromClient cfc = (CommandFromClient) is.readObject();
 
-                System.out.println("Running thread " + cfc.getData());
                 String data=cfc.getData();
                 int c = data.charAt(0) - '0';
                 int r = data.charAt(1) - '0';
                 nextPoint = data.charAt(2) - '0';
-                System.out.println("Running thread2 " + cfc.getData());
                 if(data.length() >4)
                     index = Integer.parseInt(data.substring(4));
-                System.out.println("Running thread3 " + cfc.getData());
                 checkGameOver();
 
                 if(cfc.getCommand()==CommandFromClient.RESTART)
@@ -90,23 +87,45 @@ public class ServersListener implements Runnable
                     int index = (c * 5 - 1) + r + 1;
 
                     char[] val = gameData.points.get(index);
-                    if (val[nextPoint] != '9')
+                    if (val[nextPoint] != '9') {
                         val[nextPoint] = player;
+                        System.out.println("Put data into gamepoints index " + index + " nextPoint " + nextPoint + " val " + player);
+                    }
                     gameData.points.put(index, val);
+
+                    int claim = checkGameScore(index, turn, nextPoint);
+                    if(claim != -1) {
+                        System.out.println("Claim " + turn + Integer.toString(claim));
+                        sendCommand(new CommandFromServer(CommandFromServer.CLAIM, turn + Integer.toString(claim)));
+                    }
+
 
                     next = (turn == 'R') ? 'B' : 'R';
 
                     // sends the move out to both players
                     sendCommand(new CommandFromServer(CommandFromServer.MOVE, data));
+
                     int countR = gameData.scoreForPlayer('R');
                     int countB = gameData.scoreForPlayer('B');
-                    sendCommand(new CommandFromServer(CommandFromServer.SCORE, "R: " + countR + " B:" + countB));
+                    System.out.println("Score " + "R: " + countR + " B:" + countB);
 
+                    sendCommand(new CommandFromServer(CommandFromServer.SCORE, "R: " + countR + " B:" + countB));
+                    if(countR + countB == 16) {
+                        if (countR > countB) {
+                            System.out.println("R Wins r " + countR);
+                            sendCommand(new CommandFromServer(CommandFromServer.X_WINS, data));
+                        }
+                        else if (countB > countR) {
+                            System.out.println("Count B " + countB);
+                            sendCommand(new CommandFromServer(CommandFromServer.O_WINS, data));
+                        }
+                        else {
+                            System.out.println("Tie ");
+                            sendCommand(new CommandFromServer(CommandFromServer.TIE, data));
+                        }
+                    }
                     // changes the turn and checks to see if the game is over
                     changeTurn();
-                    checkGameOver();
-
-
                 }
                 if(cfc.getCommand()==CommandFromClient.CLOSE)
                 {
@@ -140,20 +159,33 @@ public class ServersListener implements Runnable
 
     public void checkGameOver()
     {
-        System.out.println("Checking game over in line 144");
         int command = -1;
+
         if(!gameData.canMove()) {
-            System.out.println("Checking game over in line 144 gameData.canMove()- false");
-            int win = gameData.isWinner('R');
-            System.out.println("Checking game over in line 144 gameData.canMove()- false win" + win);
-            if (win == 1)
-                command = CommandFromServer.X_WINS;
-            else if(win == -1)
-                command = CommandFromServer.O_WINS;
-            else
-                command = CommandFromServer.TIE;
-            sendCommand(new CommandFromServer(command, null));
+//            sendCommand(new CommandFromServer(CommandFromServer.B_TURN, null));
+           System.out.println("Game over");
         }
+    }
+
+    public int checkGameScore(int index, char current, int nextpoint) {
+        int ind = -1;
+        System.out.println("Checking claim for " + index + " current " + current);
+
+        boolean squ = gameData.claimIfSquareFormed(index, current);
+        if (squ == true)
+            return index;
+
+        if ((squ == false) && (index - 5 >= 0))
+            squ = gameData.claimIfSquareFormed(index - 5, current);
+        if (squ == true)
+            return index - 5;
+
+        if ((squ == false) && (index % 5 != 0) && (index - 1 >= 0))
+            squ = gameData.claimIfSquareFormed(index - 1, current);
+        if (squ == true)
+            return index - 1;
+
+        return -1;
     }
 
     public void sendCommand(CommandFromServer cfs)

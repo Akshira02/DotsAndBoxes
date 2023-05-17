@@ -9,6 +9,7 @@ import java.util.HashMap;
 public class TTTFrame extends JFrame  {
     // Display message
     private String text = "";
+    private String winText = "";
     private String textScore = "Score";
     // the letter you are playing as
     private char player;
@@ -149,7 +150,6 @@ public class TTTFrame extends JFrame  {
                                 gameData.points.put(index, val);
                                 text = "R's Turn";
                                 pressed = true;
-                                System.out.println("Gamedata index " + index + " - 1 - Playerturn" + playerTurn);
                                 try {
                                     os.writeObject(new CommandFromClient(CommandFromClient.MOVE, "" + colStart + rowStart  + 1 + player + index));
                                     os.flush();
@@ -163,13 +163,9 @@ public class TTTFrame extends JFrame  {
                 }
 
                 //Right Click
-                System.out.println("e.getButton() " + e.getButton());
-                System.out.println("status " + status);
                 if (e.getButton() == MouseEvent.BUTTON3 && status == true) {
-                    System.out.println("rightclick " + status);
                     if (player == 'R') {
                         try {
-                            System.out.println("Sneding rightclick " + player);
                             os.writeObject(new CommandFromClient(CommandFromClient.RESTART, "999" + player));
                             os.flush();
                         } catch (Exception exception) {
@@ -177,7 +173,6 @@ public class TTTFrame extends JFrame  {
                         }
                     } else if (player == 'B') {
                         try {
-                            System.out.println("Sneding rightclick " + player);
                             os.writeObject(new CommandFromClient(CommandFromClient.RESTART, "999" + player));
                             os.flush();
                         } catch (Exception exception) {
@@ -188,9 +183,7 @@ public class TTTFrame extends JFrame  {
                     gameData.setNext('R');
                     setRestartText(player);
                 }
-                System.out.println("4444");
                 repaint();
-                System.out.println("55555");
             }
 
 
@@ -228,6 +221,7 @@ public class TTTFrame extends JFrame  {
 
     public void paint(Graphics graph) {
         Graphics2D g = (Graphics2D) graph;
+        char[] score = gameData.score;
         g.setColor(Color.white);
         g.fillRect(0, 0, 500, 500);
         int R = -1;
@@ -235,9 +229,15 @@ public class TTTFrame extends JFrame  {
 
 
         // draws the display text to the screen
-        g.setColor(Color.BLUE);
-        g.setFont(new Font("Times New Roman", Font.BOLD, 20));
-        g.drawString(text, 20, 55);
+        if(status != true) {
+            g.setColor(Color.BLUE);
+            g.setFont(new Font("Times New Roman", Font.BOLD, 20));
+            g.drawString(text, 20, 55);
+        }else {
+            g.setColor(Color.BLUE);
+            g.setFont(new Font("Times New Roman", Font.BOLD, 20));
+            g.drawString(winText, 50, 55);
+        }
 
         g.setFont(new Font("Times New Roman", Font.BOLD, 20));
         g.drawString(textScore, 30, 80);
@@ -263,30 +263,44 @@ public class TTTFrame extends JFrame  {
                     g.setColor(Color.RED);
                 else if (lines[k] == 'B')
                     g.setColor(Color.BLACK);
-                System.out.println("i:" + i + "k:" + k + " lines:" + lines[k]);
                 if (lines[k] == 'R' || lines[k] == 'B') {
                     if (k == 0) {
-                        System.out.println("Row" + row + " Col" + col + "x1:" + xOffset + (row) * squareSide + "y1:"+ yOffset + (col) * squareSide + " x2:" + xOffset + (row + 1) * squareSide + "y2:"+yOffset + (col) * squareSide);
                         g.drawLine(xOffset + (row) * squareSide, yOffset + (col) * squareSide, xOffset + (row + 1) * squareSide, yOffset + (col) * squareSide);
                     }else if(k== 1) {
-                        System.out.println("Row" + row + " Col" + col + "x1:" + xOffset + (row) * squareSide + "y1:"+ yOffset + (col) * squareSide + " x2:" + xOffset + (row) * squareSide + "y2:"+yOffset + (col + 1) * squareSide);
                         g.drawLine(xOffset + (row) * squareSide, yOffset + (col) * squareSide, xOffset + (row) * squareSide, yOffset + (col + 1) * squareSide);
                     }
                 }
             }
+            if(score[i] == 'R') {
+                g.setColor(Color.red);
+                g.fillRect(xOffset + (row) * squareSide + 10, yOffset + (col) * squareSide+10, squareSide-20, squareSide-20);
+            }
+            if(score[i] == 'B') {
+                g.setColor(Color.black);
+                g.fillRect(xOffset + (row) * squareSide + 10, yOffset + (col) * squareSide+ 10, squareSide-20, squareSide-20);
+            }
+
+
         }
     }
 
     public void setText(String text) {
         this.text = text;
+        this.winText = "Tie Game!";
         repaint();
     }
 
     public void setWinText(char winner) {
-        if(winner == player)
+        System.out.println("Winner" + winner + " Player " + player);
+        if(winner == player) {
             this.text = "You WIN!";
-        else
+            this.winText = "You WIN!";
+        }
+        else {
             this.text = "You LOSE!";
+            this.winText = "You LOSE!";
+        }
+
         repaint();
     }
 
@@ -300,7 +314,16 @@ public class TTTFrame extends JFrame  {
     public void setScore(String score) {
         textScore = score;
         this.repaint();
+
     }
+
+    public void drawSquare(char player, int index) {
+
+        gameData.score[index] = player;
+
+        this.repaint();
+    }
+
 
     public void clearReset(char player) {
         gameData.restartR = false;
@@ -378,11 +401,7 @@ public class TTTFrame extends JFrame  {
     }
 
     public void setTurn(char turn) {
-        System.out.println("Turn" + turn);
-        System.out.println("playerTurn" + playerTurn);
-        System.out.println("pressed" + pressed);
         if(turn==player) {
-            System.out.println("if");
             pressed = false;
             playerTurn = player;
             text = "Your turn";
@@ -391,7 +410,6 @@ public class TTTFrame extends JFrame  {
         {
             //akshi
             playerTurn = player;
-            System.out.println("else");
             text = turn+"'s turn.";
         }
         repaint();
